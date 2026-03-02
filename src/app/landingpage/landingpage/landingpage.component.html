@@ -1,48 +1,202 @@
 <nav class="navbar">
-  <div class="navbar-left">
-    <a routerLink="/landingpage">
-      <img src="assets/icons8-book-100.png" alt="Book Icon" class="book-icon" />
-    </a>
-  </div>
-  <div class="navbar-middle">
+  <a routerLink="/landingpage" class="navbar-brand navbar-brand-desk" aria-label="BookFinder Home" (click)="goToLandingDefault()">
+    <img src="assets/logo.png" alt="BookFinder" class="navbar-logo-img" onerror="this.style.display='none'">
+    <span class="logo-text"><span class="logo-word">Book</span><span class="logo-word logo-word-accent">Finder</span></span>
+  </a>
+  <button type="button" class="navbar-burger" aria-label="Menu" (click)="toggleMobileMenu()">
+    <img src="assets/logo.png" alt="" class="navbar-burger-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <span class="logo-icon burger-icon burger-icon-fallback">
+      <span class="logo-stack logo-stack-1"></span>
+      <span class="logo-stack logo-stack-2"></span>
+      <span class="logo-stack logo-stack-3"></span>
+    </span>
+  </button>
+  <a routerLink="/landingpage" class="navbar-brand-mobile logo-text" aria-label="BookFinder Home" (click)="goToLandingDefault(); closeMobileMenu()">
+    <span class="logo-word">Book</span><span class="logo-word logo-word-accent">Finder</span>
+  </a>
+  <div class="navbar-search-wrap navbar-search-desk">
+    <svg class="navbar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
     <input
       type="text"
-      placeholder="Search for books..."
+      placeholder="Try a title, author, or topic…"
       class="search-input"
       #searchInput
+      [(ngModel)]="searchQuery"
+      (keydown.enter)="onSearch(searchQuery)"
     />
-    <button class="search-button" (click)="onSearch(searchInput.value)">
-      Search
+    <button
+      type="button"
+      class="search-clear"
+      aria-label="Clear search"
+      *ngIf="searchQuery"
+      (click)="clearSearch(searchInput, false)"
+    >
+      <svg class="search-clear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
     </button>
   </div>
+  <div class="navbar-spacer"></div>
 </nav>
 
-<div class="loading-container" *ngIf="loading">
-  <div class="spinner"></div>
-  <p>Loading books...</p>
-</div>
-
-<div class="error-message" *ngIf="error">
-  {{ error }}
-</div>
-
-<div class="card-container-fluid" *ngIf="!loading && !error">
-  <div class="card" *ngFor="let book of books">
-    <div class="card-image">
-      <img
-        [src]="
-          book.volumeInfo.imageLinks?.thumbnail ||
-          'assets/no-image-available.webp'
-        "
-        alt="Book Cover"
-      />
-    </div>
-    <div class="card-content">
-      <h3 class="card-title">{{ book.volumeInfo.title }}</h3>
-      <p class="card-author" *ngIf="book.volumeInfo.authors">
-        {{ book.volumeInfo.authors[0] }}
-      </p>
-      <button class="btn-details" (click)="showBook(book.id)">Read More</button>
-    </div>
+<div class="mobile-search-bar">
+  <div class="mobile-search-wrap">
+    <svg class="mobile-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <input
+      type="text"
+      placeholder="Search books…"
+      class="mobile-search-input"
+      #mobileSearchInput
+      [(ngModel)]="mobileSearchQuery"
+      (focus)="mobileSearchFocused = true"
+      (blur)="mobileSearchFocused = false"
+      (keydown.enter)="onSearch(mobileSearchQuery)"
+    />
+    <button
+      type="button"
+      class="search-clear mobile-search-clear"
+      aria-label="Clear search"
+      *ngIf="mobileSearchQuery"
+      (click)="clearSearch(mobileSearchInput, true)"
+    >
+      <svg class="search-clear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
   </div>
+  <button
+    type="button"
+    class="mobile-search-cancel"
+    aria-label="Cancel search"
+    *ngIf="!mobileSearchQuery && mobileSearchFocused"
+    (click)="dismissMobileSearch(mobileSearchInput)"
+  >Cancel</button>
+</div>
+
+<div class="layout-with-sidebar">
+  <aside class="categories-sidebar categories-sidebar-desk">
+    <h2 class="categories-sidebar-title">Categories</h2>
+    <ul class="categories-list">
+      <li *ngFor="let cat of categories">
+        <button type="button" class="category-item" [class.active]="selectedCategory === cat.id" (click)="setCategory(cat.id)">
+          <span class="category-bullet"></span>
+          <span class="category-label">{{ cat.label }}</span>
+        </button>
+      </li>
+    </ul>
+  </aside>
+
+  <div class="mobile-menu-overlay" *ngIf="mobileMenuOpen" (click)="closeMobileMenu()" aria-hidden="true"></div>
+  <aside class="categories-sidebar categories-sidebar-mobile" [class.open]="mobileMenuOpen">
+    <div class="categories-sidebar-mobile-header">
+      <h2 class="categories-sidebar-title">Categories</h2>
+      <button type="button" class="mobile-menu-close" aria-label="Close menu" (click)="closeMobileMenu()">×</button>
+    </div>
+    <ul class="categories-list">
+      <li *ngFor="let cat of categories">
+        <button type="button" class="category-item" [class.active]="selectedCategory === cat.id" (click)="setCategory(cat.id)">
+          <span class="category-bullet"></span>
+          <span class="category-label">{{ cat.label }}</span>
+        </button>
+      </li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+  <section class="hero" *ngIf="!loading && books.length > 0 && !error">
+    <h1 class="hero-title">Discover your next read</h1>
+    <p class="hero-subtitle">Search by title or author, or browse suggestions below.</p>
+  </section>
+  <section class="hero hero-mini" *ngIf="loading || (books.length === 0 && !error)">
+    <h1 class="hero-title">Discover your next read</h1>
+    <p class="hero-subtitle">Finding great books for you…</p>
+  </section>
+
+  <div class="error-message" *ngIf="error && !loading && !noSearchResults">
+    {{ error }}
+  </div>
+
+  <section class="no-results-block" *ngIf="error && !loading && noSearchResults">
+    <p class="no-results-message">{{ error }}</p>
+    <p class="no-results-hint">Try one of these popular searches, or browse suggestions.</p>
+    <div class="suggestion-chips">
+      <button type="button" class="suggestion-chip" *ngFor="let term of suggestedSearches" (click)="searchSuggested(term)">
+        {{ term }}
+      </button>
+    </div>
+    <button type="button" class="btn-browse-again" (click)="goToLandingDefault()">Browse popular books</button>
+  </section>
+
+  <div class="card-container-fluid" *ngIf="loading">
+    <article class="card card-skeleton" *ngFor="let i of skeletonCount">
+      <div class="card-link">
+        <div class="card-cover skeleton-block"></div>
+        <div class="card-body">
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line skeleton-author"></div>
+          <div class="skeleton-line skeleton-cta"></div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="card-container-fluid" *ngIf="!loading && !error">
+    <article class="card" *ngFor="let book of books">
+      <div class="card-link" (click)="showBook(book.id)">
+        <div class="card-cover">
+          <img
+            [src]="
+              book.volumeInfo.imageLinks?.thumbnail ||
+              'assets/no-image0available.webp'
+            "
+            alt="{{ book.volumeInfo.title }}"
+          />
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">{{ book.volumeInfo.title }}</h3>
+          <p class="card-author" *ngIf="book.volumeInfo.authors">
+            {{ book.volumeInfo.authors[0] }}
+          </p>
+          <span class="card-cta">See more</span>
+        </div>
+      </div>
+    </article>
+    <p class="empty-state" *ngIf="!loading && !error && books.length === 0">
+      No books here yet. Try searching by title or author to get started.
+    </p>
+    <ng-container *ngIf="loadingMore">
+      <article class="card card-skeleton" *ngFor="let i of skeletonMoreCount">
+        <div class="card-link">
+          <div class="card-cover skeleton-block"></div>
+          <div class="card-body">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-author"></div>
+            <div class="skeleton-line skeleton-cta"></div>
+          </div>
+        </div>
+      </article>
+    </ng-container>
+    <div class="load-more-wrap load-more-mobile-only" *ngIf="!loading && !error && books.length > 0 && hasMore">
+      <button type="button" class="btn-load-more" (click)="loadMore()" [disabled]="loadingMore">
+        <span class="btn-load-more-spinner" *ngIf="loadingMore"></span>
+        <span class="btn-load-more-text">{{ loadingMore ? 'Loading…' : 'Load more' }}</span>
+      </button>
+    </div>
+    <nav class="pagination-wrap pagination-desktop-only" *ngIf="!loading && !error && books.length > 0 && totalPages > 1" aria-label="Results pages">
+      <button type="button" class="pagination-btn" [disabled]="currentPage <= 1" (click)="goToPage(currentPage - 1)" aria-label="Previous page">Previous</button>
+      <div class="pagination-pages">
+        <button type="button" class="pagination-page" *ngFor="let p of pageNumbers" [class.active]="p === currentPage" (click)="goToPage(p)" [attr.aria-current]="p === currentPage ? 'page' : null">{{ p }}</button>
+      </div>
+      <button type="button" class="pagination-btn" [disabled]="currentPage >= totalPages" (click)="goToPage(currentPage + 1)" aria-label="Next page">Next</button>
+    </nav>
+  </div>
+  </main>
 </div>

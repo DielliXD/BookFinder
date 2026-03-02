@@ -10,8 +10,7 @@ import { BookService } from 'src/app/landingpage/book.service';
 })
 export class BookInfoComponent implements OnInit {
   idBook: string = '';
-  book: any; 
-  router: any;
+  book: any;
 
   constructor(private serviceBook: BookService, private route: ActivatedRoute) { }
 
@@ -30,6 +29,12 @@ export class BookInfoComponent implements OnInit {
     }); 
   }
   openBookDetails(bookId: string) {
-    window.open(`https://books.google.com/books?id=${bookId}`, '_blank');
+    window.open(`https://openlibrary.org/works/${bookId}`, '_blank');
+  }
+
+  hasAnyMeta(book: any): boolean {
+    if (!book?.volumeInfo) return false;
+    const v = book.volumeInfo;
+    return !!(v.publishedDate || v.pageCount != null || v.publisher || (v.categories?.length) || v.industryIdentifiers?.[0]?.identifier);
   }
 }

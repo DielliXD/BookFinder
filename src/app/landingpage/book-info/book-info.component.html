@@ -1,16 +1,44 @@
-<div class="book-info-container">
-  <div class="book-info">
-      <a href="/landingpage" class="goback">Go Back</a>
-      <img [src]="book?.volumeInfo?.imageLinks?.thumbnail || 'assets/no-image0available.webp'" alt="Book Cover">
-      <h2>{{ book?.volumeInfo?.title }}</h2>
-      <p>Author(s): {{ book?.volumeInfo?.authors?.join(', ') }}</p>
-      <p>Published Date: {{ book?.volumeInfo?.publishedDate }}</p>
-      <p>Page Count: {{ book?.volumeInfo?.pageCount }}</p>
-      <p>Publisher: {{ book?.volumeInfo?.publisher }}</p>
-      <p>Categories: {{ book?.volumeInfo?.categories?.join(', ') }}</p>
-      <p>ISBN: {{ book?.volumeInfo?.industryIdentifiers[0]?.identifier }}</p>
-      <p>Description:</p>
-      <div [innerHTML]="book?.volumeInfo?.description"></div>
-      <button (click)="openBookDetails(book.id)" class="btn-details">More Details</button>
+<header class="book-info-header">
+  <a routerLink="/landingpage" class="book-info-home" aria-label="Back to BookFinder">
+    <span class="book-info-home-icon">←</span>
+    <span>Back to discover</span>
+  </a>
+</header>
+<div class="book-info-container" *ngIf="book">
+  <div class="book-info-card">
+    <div class="book-info-cover">
+      <img [src]="book?.volumeInfo?.imageLinks?.thumbnail || 'assets/no-image0available.webp'" alt="{{ book?.volumeInfo?.title }}">
+    </div>
+    <div class="book-info-details">
+      <h1 class="book-info-title">{{ book?.volumeInfo?.title }}</h1>
+      <p class="book-info-authors" *ngIf="book?.volumeInfo?.authors?.length">By {{ book?.volumeInfo?.authors?.join(', ') }}</p>
+      <dl class="book-info-meta" *ngIf="hasAnyMeta(book)">
+        <ng-container *ngIf="book?.volumeInfo?.publishedDate">
+          <dt>Published</dt>
+          <dd>{{ book.volumeInfo.publishedDate }}</dd>
+        </ng-container>
+        <ng-container *ngIf="book?.volumeInfo?.pageCount != null">
+          <dt>Pages</dt>
+          <dd>{{ book.volumeInfo.pageCount }}</dd>
+        </ng-container>
+        <ng-container *ngIf="book?.volumeInfo?.publisher">
+          <dt>Publisher</dt>
+          <dd>{{ book.volumeInfo.publisher }}</dd>
+        </ng-container>
+        <ng-container *ngIf="book?.volumeInfo?.categories?.length">
+          <dt>Categories</dt>
+          <dd>{{ book.volumeInfo.categories.join(', ') }}</dd>
+        </ng-container>
+        <ng-container *ngIf="book?.volumeInfo?.industryIdentifiers?.[0]?.identifier">
+          <dt>ISBN</dt>
+          <dd>{{ book.volumeInfo.industryIdentifiers[0].identifier }}</dd>
+        </ng-container>
+      </dl>
+      <div class="book-info-description" *ngIf="book?.volumeInfo?.description">
+        <h2>About this book</h2>
+        <div [innerHTML]="book?.volumeInfo?.description"></div>
+      </div>
+      <a (click)="openBookDetails(book.id)" class="btn-details" href="javascript:void(0)" role="button">More on Open Library →</a>
+  </div>
   </div>
 </div>

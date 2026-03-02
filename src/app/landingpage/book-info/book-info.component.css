@@ -1,51 +1,130 @@
+.book-info-header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f1a 100%);
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.book-info-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.book-info-home:hover {
+  color: #d4af37;
+}
+
+.book-info-home-icon {
+  font-size: 1.1rem;
+}
+
 .book-info-container {
-  margin-top: 30px;
+  min-height: 60vh;
+  padding: 32px 24px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100%;
+  align-items: flex-start;
 }
 
-.book-info {
-  max-width: 600px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: black;
-  color: white;
+.book-info-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  max-width: 720px;
+  width: 100%;
+  background: linear-gradient(180deg, #252538 0%, #1e1e2e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
-.book-info img {
-  max-width: 200px;
+.book-info-cover {
+  flex: 0 0 200px;
+}
+
+.book-info-cover img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   display: block;
-  margin: 0 auto 20px;
 }
 
-.book-info h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
+.book-info-details {
+  flex: 1;
+  min-width: 0;
 }
 
-.book-info p {
-  margin-bottom: 5px;
+.book-info-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.5rem, 3vw, 1.85rem);
+  font-weight: 700;
+  color: #f4f1ea;
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+.book-info-authors {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 20px;
+}
+
+.book-info-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 20px;
+  margin: 0 0 24px;
+  font-size: 0.9rem;
+}
+
+.book-info-meta dt {
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  font-weight: 500;
+}
+
+.book-info-meta dd {
+  margin: 0;
+  color: #f0ede6;
+}
+
+.book-info-description {
+  margin-bottom: 24px;
+}
+
+.book-info-description h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d4af37;
+  margin: 0 0 10px;
+}
+
+.book-info-description div {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .btn-details {
-  background-color: #494b49;
-  border: none;
-  color: white;
-  padding: 5px 10px;
-  text-align: center;
-  text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
+  padding: 10px 20px;
+  background: linear-gradient(180deg, #d4af37 0%, #b8962e 100%);
+  color: #1a1a2e;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 999px;
+  text-decoration: none;
   cursor: pointer;
-  border-radius: 4px;
-  margin-left: 40%;
-  margin-top: 15px;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-details:hover {
-  background-color: #333633;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
 }
